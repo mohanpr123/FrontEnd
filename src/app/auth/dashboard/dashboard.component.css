@@ -1,0 +1,17 @@
+p {
+  text-align: center;
+  color: rgb(157, 14, 16);
+  font-style: italic;
+  font-size: larger;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* img {
+  width: 90%;
+  height: 85%%;
+} */

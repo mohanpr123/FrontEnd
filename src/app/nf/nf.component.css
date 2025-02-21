@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  justify-content: center;
+  font-size: larger;
+}
+.mat-icon {
+  /* width: 30px;
+    height: 24px; */
+  font-size: 35px;
+}
