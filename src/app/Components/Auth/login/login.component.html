@@ -1,0 +1,75 @@
+<div class="login-container">
+  <h2>Login</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        formControlName="email"
+        type="email"
+        placeholder="Enter your email"
+      />
+      <mat-error
+        *ngIf="
+          loginForm.get('email')?.hasError('required') &&
+          loginForm.get('email')?.touched
+        "
+      >
+        Email is required.
+      </mat-error>
+      <mat-error
+        *ngIf="
+          loginForm.get('email')?.hasError('pattern') &&
+          loginForm.get('email')?.touched
+        "
+      >
+        Invalid email format.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        formControlName="password"
+        type="password"
+        placeholder="Enter your password"
+      />
+      <mat-error
+        *ngIf="
+          loginForm.get('password')?.hasError('required') &&
+          loginForm.get('password')?.touched
+        "
+      >
+        Password is required.
+      </mat-error>
+      <mat-error
+        *ngIf="
+          loginForm.get('password')?.hasError('pattern') &&
+          loginForm.get('password')?.touched
+        "
+      >
+        Password must be at least 6 characters, include letters and numbers.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Login Button -->
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      class="full-width"
+      [disabled]="!loginForm.valid"
+    >
+      Login
+    </button>
+    <br />
+    <div class="reset" routerLink="/reset-password">
+      {{resetMessage}}
+    </div>
+    <div class="msg" *ngIf="message1">
+      <span> {{ message1 }}</span
+      ><span routerLink="/register"> REGISTER </span>
+    </div>
+  </form>
+</div>

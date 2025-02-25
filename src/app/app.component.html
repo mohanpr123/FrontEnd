@@ -1,0 +1,20 @@
+
+<mat-toolbar color="primary" *ngIf="!isLoggedIn || isProductsRoute">
+  <span class="title">ANGULAR-APP</span>
+  <span class="spacer"></span>
+  <nav *ngIf="!isLoggedIn">
+    <button mat-button routerLink="/login">
+      <mat-icon>login</mat-icon>
+      LOGIN
+    </button>
+    <button mat-button routerLink="/register">
+      <mat-icon>person_add</mat-icon>
+      REGISTER
+    </button>
+    <button mat-button (click)="logout()" *ngIf="isLoggedIn && isProductsRoute">
+        <mat-icon>logout</mat-icon>
+        LOGOUT
+      </button>
+  </nav>
+</mat-toolbar>
+<router-outlet></router-outlet>
