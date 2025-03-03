@@ -1,24 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { User } from '../../Models/user.model';
 import { JwtResponse } from '../../Models/jwt-response.model';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
-import { ResetPasswordComponent } from '../../Components/Auth/reset-password/reset-password.component';
 import { resetPassword } from '../../Models/ResetPassword.model';
 import { ResetResponse } from '../../Models/ResetResponse.model';
-
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private BackEndUrl = 'http://localhost:8080';
+  private BackEndUrl = environment.authApiUrl;
 
   private tokenSubject: BehaviorSubject<string | null>;
-  private userLoggedInSubject = new BehaviorSubject<boolean>(false); // Renamed for clarity
-  public userLoggedIn$: Observable<boolean> = this.userLoggedInSubject.asObservable(); // Exposed as Observable
+  private userLoggedInSubject = new BehaviorSubject<boolean>(false);
+  public userLoggedIn$: Observable<boolean> = this.userLoggedInSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -26,7 +25,7 @@ export class AuthService {
     private router:Router
   ) {
     this.tokenSubject = new BehaviorSubject<string | null>(this.getToken());
-    this.userLoggedInSubject.next(!!this.getToken()); // Initialize based on existing token
+    this.userLoggedInSubject.next(!!this.getToken());
   }
 
   login(user: User): Observable<JwtResponse> {
@@ -36,7 +35,7 @@ export class AuthService {
         if (token) {
           this.clearToken();
           this.storeToken(token);
-          this.userLoggedInSubject.next(true); // Signal login
+          this.userLoggedInSubject.next(true);
         }
       })
     );

@@ -5,11 +5,17 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" required  title="username"/>
-      <mat-error *ngIf="registerForm.get('username')?.hasError('required') && registerForm.get('username')?.touched">
-        Username is required.
+      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['required']">
+        Username is required
       </mat-error>
-      <mat-error *ngIf="registerForm.get('username')?.hasError('minlength') && registerForm.get('username')?.touched">
-        Username must be at least 3 characters long.
+      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['minlength']">
+        Username must be at least 3 characters
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['whitespaceOnly']">
+        Username cannot be only whitespace
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['noSpaces']">
+        Username cannot contain spaces
       </mat-error>
     </mat-form-field>
 
@@ -51,9 +57,9 @@
       Register
     </button>
     <div class="finalMessage">
-      <span *ngIf="message">
+      <span >
         {{ message }}
-        <span mat-button routerLink="/login">Login</span>
+        <span mat-button> Already have an  account ? <a href="/login">Login</a></span>
       </span>
     </div>
   </form>

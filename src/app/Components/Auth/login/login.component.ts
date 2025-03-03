@@ -27,8 +27,7 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  message1: string | null = null;
-  resetMessage : string="Reset Password ";
+
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +49,7 @@ export class LoginComponent {
       };
       this.authService.login(user).subscribe({
         next: (response) => {
+          
           const token = response.jwt;
           if (token) {
             this.authService.storeToken(token);
@@ -58,8 +58,8 @@ export class LoginComponent {
           }
         },
         error: (err) => {
-          this.snackBarService.showMessage('Login Failed', 'OK', 3000);
-          this.message1= 'Don\'t have an account?';
+          console.error(err)
+          this.snackBarService.showMessage('Invalid Credentials', 'OK', 3000);
         }
       });
     }

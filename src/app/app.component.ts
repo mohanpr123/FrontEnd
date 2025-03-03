@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from './Services/Auth/auth.service';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -16,53 +17,51 @@ import { CommonModule } from '@angular/common';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    CommonModule
+    CommonModule,
+    MatButtonModule
   ],
-  template: `
-    <mat-toolbar color="primary" *ngIf="!isLoggedIn || isProductsRoute">
-      <span class="title">ANGULAR-APP</span>
-      <span class="spacer"></span>
-      <nav *ngIf="!isLoggedIn">
-        <button mat-button routerLink="/login">
-          <mat-icon>login</mat-icon>
-          LOGIN
-        </button>
-        <button mat-button routerLink="/register">
-          <mat-icon>person_add</mat-icon>
-          REGISTER
-        </button>
-      </nav>
-      <button mat-button (click)="logout()" *ngIf="isLoggedIn && isProductsRoute">
-        <mat-icon>logout</mat-icon>
-        LOGOUT
-      </button>
-    </mat-toolbar>
-    <router-outlet></router-outlet>
-  `,
+  templateUrl:'./app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
+  isLoginRoute: boolean = false;
+  isRegisterRoute: boolean = false;
   isProductsRoute: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {
-    // Check initial login status
+  private authSubscription: Subscription | null = null;
+
+  constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
 
-    // Subscribe to auth changes
-    this.authService.userLoggedIn$.subscribe(loggedIn => {
+    this.authSubscription = this.authService.userLoggedIn$.subscribe(loggedIn => {
       this.isLoggedIn = loggedIn;
     });
 
-    // Track current route for /products
     this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.isProductsRoute = event.url === '/products';
+      if (event instanceof NavigationEnd || event instanceof NavigationStart) {
+        this.updateRouteFlags(event.url);
       }
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
+
+  private updateRouteFlags(url: string): void {
+    this.isLoginRoute = url === '/login';
+    this.isRegisterRoute = url === '/register';
+    this.isProductsRoute = url === '/products';
+  }
+
   logout(): void {
     this.authService.logout();
+    this.isLoggedIn = false;
+    this.router.navigate(['/login']);
   }
 }

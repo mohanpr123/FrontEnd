@@ -43,14 +43,6 @@
       >
         Password is required.
       </mat-error>
-      <mat-error
-        *ngIf="
-          loginForm.get('password')?.hasError('pattern') &&
-          loginForm.get('password')?.touched
-        "
-      >
-        Password must be at least 6 characters, include letters and numbers.
-      </mat-error>
     </mat-form-field>
 
     <!-- Login Button -->
@@ -64,12 +56,15 @@
       Login
     </button>
     <br />
-    <div class="reset" routerLink="/reset-password">
-      {{resetMessage}}
+    <div class="msg" >
+      <span>
+        Don't have an Account ?
+      </span>
+      <span> <a href="/register">REGISTER</a> </span>
     </div>
-    <div class="msg" *ngIf="message1">
-      <span> {{ message1 }}</span
-      ><span routerLink="/register"> REGISTER </span>
+    <br>
+    <div class="reset" routerLink="/reset-password">
+      <button mat-button type="button">Reset Password</button>
     </div>
   </form>
 </div>

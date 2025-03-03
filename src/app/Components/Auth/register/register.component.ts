@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { NoSpacesValidatorDirective } from '../../../Services/PublicServices/no-spaces.validator';
 
 @Component({
   selector: 'app-register',
@@ -20,33 +21,31 @@ import { RouterLink } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
-    RouterLink
   ],
-  templateUrl: './register.component.html', // Kept as is
+  templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
-  registerForm: FormGroup; // Changed from individual fields to FormGroup
-  message: string | null = null; // Updated to nullable string for better type safety
+  registerForm: FormGroup;
+  message: string | null = null;
 
   constructor(
-    private fb: FormBuilder, // Added FormBuilder for reactive forms
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private snackBarService: SnackbarService
   ) {
-    // Initialize reactive form with validators
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
+      username: ['', [Validators.required,Validators.minLength(3),
+        NoSpacesValidatorDirective.noSpacesValidator()]],
       email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]],
       password: ['', [Validators.required, Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$')]],
-      confirmpassword: ['', [Validators.required]] // No pattern here, handled by custom validator
+      confirmpassword: ['', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
     });
   }
 
-  // Custom validator to check if passwords match
   private passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirmpassword = group.get('confirmpassword')?.value;

@@ -1,0 +1,44 @@
+/* Dialog Content Styling */
+.dialog-content {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Form Styling */
+.form-container {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 5px;
+}
+
+/* Mat-Form-Field Full Width */
+mat-form-field {
+  width: 100%;
+}
+
+/* Dialog Actions Styling */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 10px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 600px) {
+  .dialog-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+.title{
+ padding:15px;
+}
