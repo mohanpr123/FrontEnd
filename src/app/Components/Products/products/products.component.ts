@@ -1,67 +1,86 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { Subject, debounceTime, catchError, of, tap } from 'rxjs';
+import { Product } from '../../../types/app.type';
 import { ProductService } from '../../../Services/ProductService/product.service';
-import { Product } from '../../../Models/product.model';
-import { Subscription } from 'rxjs';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
+import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
 import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
-import { PageEvent } from '@angular/material/paginator';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { tap, catchError, of } from 'rxjs';
-import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
+import { MESSAGE } from '../../../Constants/app.constants';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { ProductQuery } from '../../../types/app.type';
 
 @Component({
   selector: 'app-products',
   standalone: true,
   imports: [
-    CommonModule,
     MatTableModule,
     MatButtonModule,
-    MatDialogModule,
-    MatPaginatorModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    CommonModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   templateUrl: './products.component.html',
-  styleUrl: './products.component.css'
+  styleUrls: ['./products.component.css'],
 })
-export class ProductsComponent implements OnInit, OnDestroy {
+export class ProductsComponent {
   products: Product[] = [];
-  displayedColumns: string[] = ['name', 'quantity', 'price', 'supplier', 'actions'];
-  private productSub!: Subscription;
-
+  DISPLAYED_COLUMNS = ['name', 'quantity', 'price', 'supplier', 'actions'];
   totalItems = 0;
-  pageSize = 5;
-  pageIndex = 0;
-  sortBy = 'name'; // Default sort column
-  sortDirection: 'asc' | 'desc' = 'asc'; // Default direction
-  searchKeyword = '';
+  private searchSubject = new Subject<string>();
 
-  private searchTimeout!: any;
-  msg!: string;
+  pageIndex = 0;
+  pageSize = 5;
+  sortBy = 'name';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  searchKeyword = '';
 
   constructor(
     private productService: ProductService,
     private dialog: MatDialog,
     private snackbarService: SnackbarService
-  ) {}
-
-  loadProducts(): void {
-    this.productService.loadProducts(this.pageIndex, this.pageSize, this.sortBy, this.sortDirection, this.searchKeyword);
+  ) {
+    this.searchSubject.pipe(debounceTime(300)).subscribe((word) => {
+      this.searchKeyword = word.trim();
+      this.loadProducts();
+    });
+    this.loadProducts();
   }
 
-  onPageChange(event: PageEvent): void {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
+  loadProducts(): void {
+    const QUERY: ProductQuery = {
+      pageIndex: this.pageIndex,
+      pageSize: this.pageSize,
+      sortBy: this.sortBy,
+      sortDirection: this.sortDirection,
+      searchKeyword: this.searchKeyword
+    };
+
+    this.productService
+      .loadProducts(QUERY)
+      .pipe(
+        tap(response => {
+          this.products = response.content;
+          this.totalItems = response.totalElements;
+        })
+      )
+      .subscribe();
+  }
+
+
+  onPageChange({ pageIndex, pageSize }: PageEvent): void {
+    this.pageIndex = pageIndex;
+    this.pageSize = pageSize;
     this.loadProducts();
   }
 
@@ -77,95 +96,47 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   onSearchChange(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    if (inputElement) {
-      this.searchKeyword = inputElement.value.trim();
-
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout);
-      }
-
-      this.searchTimeout = setTimeout(() => {
-        this.pageIndex = 0;
-        this.productService
-          .searchProducts(this.searchKeyword, this.pageIndex, this.pageSize, this.sortBy, this.sortDirection)
-          .pipe(
-            tap(response => {
-              if (response.content.length === 0) {
-                this.snackbarService.showMessage("No products found", "Ok", 3000);
-              }
-              this.products = response.content;
-              this.totalItems = response.totalElements;
-            }),
-            catchError(error => {
-              console.error('Search failed', error);
-              return of();
-            })
-          )
-          .subscribe();
-      }, 300);
-    }
-  }
-
-  ngOnInit(): void {
-    this.productSub = this.productService.products$.subscribe(data => {
-      this.products = data.content;
-      this.totalItems = data.totalElements;
-    });
-    this.loadProducts();
-  }
-
-  ngOnDestroy(): void {
-    if (this.productSub) this.productSub.unsubscribe();
-    if (this.searchTimeout) clearTimeout(this.searchTimeout);
-  }
-
-  deleteProduct(id: number): void {
-    this.productService.deleteProduct(id).subscribe({
-      next: () => {
-        this.snackbarService.showMessage("Deletion success", "OK", 3000);
-        this.products = this.products.filter(product => product.id !== id);
-        this.totalItems = this.products.length;
-        if (this.totalItems === 0) {
-          this.msg = "No products found. Add Products";
-        }
-      },
-      error: () => {
-        this.snackbarService.showMessage("Deletion failed", "OK", 3000);
-      }
-    });
+    this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
   confirmDelete(id: number): void {
-    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
-      width: '250px',
-      data: { productId: id }
-    });
+    this.dialog
+      .open(ConfirmDeleteDialogComponent, { width: '250px', data: { productId: id } })
+      .afterClosed()
+      .pipe(tap((result) => result && this.deleteProduct(id)))
+      .subscribe();
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.deleteProduct(id);
-      }
-    });
+  deleteProduct(id: number): void {
+    this.productService
+      .deleteProduct(id)
+      .pipe(
+        tap(() => {
+          this.products = this.products.filter((data) => data.id !== id);
+          this.snackbarService.showMessage(this.products.length ? MESSAGE.DELETEOK : 'No products found. Add Products');
+        }),
+        catchError(() => {
+          this.snackbarService.showMessage(MESSAGE.BADRESPONSE);
+          return of();
+        })
+      )
+      .subscribe();
   }
 
   openDialog(product?: Product): void {
-    const dialogRef = this.dialog.open(ProductDialogComponent, {
-      width: '400px',
-      data: product ? { ...product } : null
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (result.action === 'add') {
-          this.snackbarService.showMessage("Product created successfully", "OK", 3000);
+    this.dialog
+      .open(ProductDialogComponent, { width: '400px', data: product ? { ...product } : null })
+      .afterClosed()
+      .pipe(
+        tap((result) => {
+          this.snackbarService.showMessage(result.action === 'add' ? MESSAGE.CREATEOK : MESSAGE.UPDATEOK);
           this.loadProducts();
-        }
-        if (result.action === 'edit') {
-          this.snackbarService.showMessage("Updation success", "OK", 3000);
-          this.products = this.products.map(p => p.id === result.product.id ? result.product : p);
-        }
-      }
-    });
+        }),
+        catchError(()=>{
+          this.snackbarService.showMessage(MESSAGE.BADRESPONSE);
+          return of();
+        })
+      )
+      .subscribe();
   }
 }

@@ -1,84 +1,37 @@
-/* Toolbar styling with gradient */
 mat-toolbar {
-  background: linear-gradient(90deg, #3f51b5, #7986cb);
-  padding: 0 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  padding: 0 16px;
 }
 
-/* Title styling */
-.title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.title{
+  font-size: 25px;
 }
 
-/* Spacer to push elements apart */
 .spacer {
-  flex: 1 1 auto;
+  flex: 1;
 }
 
-/* Navigation container */
-nav {
-  display: flex;
-  gap: 15px;
-}
-
-/* Button styling */
-button[mat-button] {
-  color: #ffffff;
-  font-size: 14px;
+/* Style */
+button {
+  margin-left: 12px;
   font-weight: 500;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background-color 0.3s, transform 0.2s;
 }
 
-/* Button hover effect */
-button[mat-button]:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: scale(1.05);
+/* Username */
+span {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  margin-right: 12px;
 }
 
-/* Icon styling */
+
+/* Icon */
 mat-icon {
   margin-right: 8px;
   vertical-align: middle;
   transition: transform 0.3s ease;
 }
 
-
-/* Logout button specific styling */
-button[mat-button]:last-child {
-  margin-left: auto;
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  mat-toolbar {
-    flex-direction: column;
-    height: auto;
-    padding: 10px;
-  }
-  .title {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  nav {
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-  button[mat-button] {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  .spacer {
-    display: none;
-  }
-}

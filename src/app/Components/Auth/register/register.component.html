@@ -4,63 +4,57 @@
     <!-- Username -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Username</mat-label>
-      <input matInput formControlName="username" required  title="username"/>
-      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['required']">
-        Username is required
-      </mat-error>
-      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['minlength']">
-        Username must be at least 3 characters
-      </mat-error>
-      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['whitespaceOnly']">
-        Username cannot be only whitespace
-      </mat-error>
-      <mat-error *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['noSpaces']">
-        Username cannot contain spaces
-      </mat-error>
+      <input matInput formControlName="username" required title="username"/>
+      @if (registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['required']) {
+        <mat-error>Username is required</mat-error>
+      }
+      @if (registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['minlength']) {
+        <mat-error>Username must be at least 3 characters</mat-error>
+      }
+      @if (registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['whitespaceOnly']) {
+        <mat-error>Username cannot be only whitespace</mat-error>
+      }
+      @if (registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['noSpaces']) {
+        <mat-error>Username cannot contain spaces</mat-error>
+      }
     </mat-form-field>
 
     <!-- Email -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Email</mat-label>
       <input matInput formControlName="email" type="email" placeholder="Enter your email" />
-      <mat-error *ngIf="registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched">
-        Email is required.
-      </mat-error>
-      <mat-error *ngIf="registerForm.get('email')?.hasError('pattern') && registerForm.get('email')?.touched">
-        Invalid email format.
-      </mat-error>
+      @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+        <mat-error>Email is required.</mat-error>
+      }
+      @if (registerForm.get('email')?.hasError('pattern') && registerForm.get('email')?.touched) {
+        <mat-error>Invalid email format.</mat-error>
+      }
     </mat-form-field>
 
     <!-- Password -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Password</mat-label>
       <input matInput formControlName="password" type="password" placeholder="Enter your password" />
-      <mat-error *ngIf="registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched">
-        Password is required.
-      </mat-error>
-      <mat-error *ngIf="registerForm.get('password')?.hasError('pattern') && registerForm.get('password')?.touched">
-        Password must be at least 6 characters, include letters and numbers.
-      </mat-error>
+      @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+        <mat-error>Password is required.</mat-error>
+      }
+      @if (registerForm.get('password')?.hasError('pattern') && registerForm.get('password')?.touched) {
+        <mat-error>Password must be at least 6 characters, include letters and numbers.</mat-error>
+      }
     </mat-form-field>
 
     <!-- Confirm Password -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Confirm Password</mat-label>
       <input matInput formControlName="confirmpassword" type="password" placeholder="Confirm your password" />
-      <mat-error *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmpassword')?.touched">
-        Passwords do not match.
-      </mat-error>
+      @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmpassword')?.touched) {
+        <mat-error>Passwords do not match.</mat-error>
+      }
     </mat-form-field>
 
     <!-- Register Button -->
     <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="!registerForm.valid">
       Register
     </button>
-    <div class="finalMessage">
-      <span >
-        {{ message }}
-        <span mat-button> Already have an  account ? <a href="/login">Login</a></span>
-      </span>
-    </div>
   </form>
 </div>

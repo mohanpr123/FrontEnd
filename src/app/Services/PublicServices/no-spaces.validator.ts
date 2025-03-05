@@ -16,15 +16,11 @@ export class NoSpacesValidatorDirective implements Validator {
       const value = control.value || '';
 
       if (typeof value !== 'string') {
-        return null; 
+        return null;
       }
 
       if (value.trim().length === 0) {
         return { whitespaceOnly: true };
-      }
-
-      if (/\s/.test(value)) {
-        return { noSpaces: true };
       }
 
       return null;

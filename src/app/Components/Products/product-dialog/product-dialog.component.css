@@ -1,11 +1,9 @@
-/* Dialog Content Styling */
 .dialog-content {
   display: flex;
   gap: 16px;
   width: 100%;
 }
 
-/* Form Styling */
 .form-container {
   width: 500px;
   display: flex;
@@ -14,12 +12,10 @@
   margin-top: 5px;
 }
 
-/* Mat-Form-Field Full Width */
 mat-form-field {
   width: 100%;
 }
 
-/* Dialog Actions Styling */
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
@@ -27,7 +23,6 @@ mat-form-field {
   padding-top: 10px;
 }
 
-/* Responsive Design */
 @media screen and (max-width: 600px) {
   .dialog-actions {
     flex-direction: column;
@@ -39,6 +34,6 @@ mat-form-field {
   }
 }
 
-.title{
- padding:15px;
+.title {
+  padding: 15px;
 }

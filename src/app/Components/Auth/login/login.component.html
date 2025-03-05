@@ -9,22 +9,12 @@
         type="email"
         placeholder="Enter your email"
       />
-      <mat-error
-        *ngIf="
-          loginForm.get('email')?.hasError('required') &&
-          loginForm.get('email')?.touched
-        "
-      >
-        Email is required.
-      </mat-error>
-      <mat-error
-        *ngIf="
-          loginForm.get('email')?.hasError('pattern') &&
-          loginForm.get('email')?.touched
-        "
-      >
-        Invalid email format.
-      </mat-error>
+      @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+        <mat-error>Email is required.</mat-error>
+      }
+      @if (loginForm.get('email')?.hasError('pattern') && loginForm.get('email')?.touched) {
+        <mat-error>Invalid email format.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -35,14 +25,9 @@
         type="password"
         placeholder="Enter your password"
       />
-      <mat-error
-        *ngIf="
-          loginForm.get('password')?.hasError('required') &&
-          loginForm.get('password')?.touched
-        "
-      >
-        Password is required.
-      </mat-error>
+      @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+        <mat-error>Password is required.</mat-error>
+      }
     </mat-form-field>
 
     <!-- Login Button -->
@@ -56,11 +41,9 @@
       Login
     </button>
     <br />
-    <div class="msg" >
-      <span>
-        Don't have an Account ?
-      </span>
-      <span> <a href="/register">REGISTER</a> </span>
+    <div class="msg">
+      <span>Don't have an Account?</span>
+      <span><a href="/register">REGISTER</a></span>
     </div>
     <br>
     <div class="reset" routerLink="/reset-password">

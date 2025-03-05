@@ -7,8 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { resetPassword } from '../../../Models/ResetPassword.model';
+import { resetPassword } from '../../../types/app.type';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
+import { MESSAGE,ROUTES } from '../../../Constants/app.constants';
 
 
 @Component({
@@ -30,7 +31,7 @@ export class ResetPasswordComponent {
     });
   }
 
-  OnReset(): void {
+  onReset(): void {
     if (this.resetForm.valid) {
       const request: resetPassword = {
         email: this.resetForm.value.email,
@@ -39,12 +40,12 @@ export class ResetPasswordComponent {
       this.authService.resetPassword(request).subscribe(
         {
           next: () => {
-            this.snackBar.showMessage('Password reset successful', 'OK', 3000);
-            this.router.navigate(['/login']);
+            this.snackBar.showMessage(MESSAGE.RESETOK);
+            this.router.navigate([ROUTES.LOGIN]);
           },
           error: (error) => {
-            this.errorMessage = error.error || 'Password reset failed. Please check your details.';
-            this.snackBar.showMessage(this.errorMessage, 'OK', 3000);
+            console.log(error);
+            this.snackBar.showMessage(MESSAGE.BADRESPONSE);
           }
         });
     }

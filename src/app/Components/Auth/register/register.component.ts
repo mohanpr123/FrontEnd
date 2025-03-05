@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,8 +8,12 @@ import { AuthService } from '../../../Services/Auth/auth.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { tap, catchError, of } from 'rxjs';
+import { RegisterForm, User } from '../../../types/app.type';
 import { NoSpacesValidatorDirective } from '../../../Services/PublicServices/no-spaces.validator';
+import { ValidationErrors, AbstractControl } from '@angular/forms';
+import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
+
 
 @Component({
   selector: 'app-register',
@@ -26,8 +30,7 @@ import { NoSpacesValidatorDirective } from '../../../Services/PublicServices/no-
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
-  registerForm: FormGroup;
-  message: string | null = null;
+  registerForm: RegisterForm;
 
   constructor(
     private fb: FormBuilder,
@@ -35,42 +38,42 @@ export class RegisterComponent {
     private router: Router,
     private snackBarService: SnackbarService
   ) {
-    this.registerForm = this.fb.group({
-      username: ['', [Validators.required,Validators.minLength(3),
-        NoSpacesValidatorDirective.noSpacesValidator()]],
+    this.registerForm = this.fb.nonNullable.group({
+      username: ['', [Validators.required, Validators.minLength(3), NoSpacesValidatorDirective.noSpacesValidator()]],
       email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]],
       password: ['', [Validators.required, Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$')]],
-      confirmpassword: ['', [Validators.required]]
-    }, {
-      validators: this.passwordMatchValidator
-    });
+      confirmpassword: ['', [Validators.required]],
+    }, { validators: this.passwordMatchValidator });
   }
 
-  private passwordMatchValidator(group: FormGroup) {
-    const password = group.get('password')?.value;
-    const confirmpassword = group.get('confirmpassword')?.value;
-    return password === confirmpassword ? null : { passwordMismatch: true };
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('confirmpassword')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
   }
+
 
   onRegister(): void {
-    if (this.registerForm.valid) {
-      const user = {
-        username: this.registerForm.value.username,
-        email: this.registerForm.value.email,
-        password: this.registerForm.value.password,
-      };
-      this.authService.register(user).subscribe({
-        next: (createdUser) => {
-          this.snackBarService.showMessage('Registration Success', 'OK', 3000);
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          this.snackBarService.showMessage('Registration Failed', 'OK', 3000);
-          this.message = 'Registration failed. Please try again.';
-        }
-      });
-    } else {
-      this.message = 'Please complete the form correctly.';
-    }
+    if (this.registerForm.invalid) return;
+
+    const DATA = {
+      username: this.registerForm.value.username,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password,
+    }as User;
+
+    this.authService
+      .register(DATA)
+      .pipe(
+        tap(() => {
+          this.snackBarService.showMessage(MESSAGE.REGISTEROK);
+          this.router.navigate([ROUTES.LOGIN]);
+        }),
+        catchError(() => {
+          this.snackBarService.showMessage(MESSAGE.BADRESPONSE);
+          return of();
+        })
+      )
+      .subscribe();
   }
 }

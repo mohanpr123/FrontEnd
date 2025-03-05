@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,10 @@ import { Router } from '@angular/router';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { tap, catchError, of } from 'rxjs';
+import { LoginForm, User } from '../../../types/app.type';
+import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
+
 
 @Component({
   selector: 'app-login',
@@ -20,14 +24,13 @@ import { RouterLink } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  loginForm: FormGroup;
-
+  loginForm: LoginForm;
 
   constructor(
     private fb: FormBuilder,
@@ -35,33 +38,34 @@ export class LoginComponent {
     private router: Router,
     private snackBarService: SnackbarService
   ) {
-    this.loginForm = this.fb.group({
+    this.loginForm = this.fb.nonNullable.group({
       email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]],
-      password: ['', [Validators.required, Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$')]]
+      password: ['', [Validators.required, Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$')]],
     });
   }
 
   onLogin(): void {
-    if (this.loginForm.valid) {
-      const user = {
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password
-      };
-      this.authService.login(user).subscribe({
-        next: (response) => {
-          
-          const token = response.jwt;
-          if (token) {
-            this.authService.storeToken(token);
-            this.snackBarService.showMessage('Login Success', 'OK', 3000);
-            this.router.navigate(['/products']);
-          }
-        },
-        error: (err) => {
-          console.error(err)
-          this.snackBarService.showMessage('Invalid Credentials', 'OK', 3000);
-        }
-      });
-    }
+    if (this.loginForm.invalid)
+      return;
+
+    const DATA = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    }as User;
+    this.authService
+      .login(DATA)
+      .pipe(
+        tap(response => {
+          this.authService.storeToken(response.jwt);
+          this.authService.storeUsername(response.username);
+          this.snackBarService.showMessage(MESSAGE.LOGINOK);
+          this.router.navigate([ROUTES.PRODUCTS]);
+        }),
+        catchError(() => {
+          this.snackBarService.showMessage(MESSAGE.LOGINFAILED);
+          return of();
+        })
+      )
+      .subscribe();
   }
 }

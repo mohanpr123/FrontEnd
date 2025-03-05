@@ -1,19 +1,14 @@
-import { CanActivateFn , Router} from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from '../Services/Auth/auth.service';
+import { ROUTES } from '../Constants/app.constants';
 
-export const loginGuardGuard: CanActivateFn = (route, state) => {
+export const loginGuardGuard: CanActivateFn = () => {
 
   const authService = inject(AuthService);
-  const router=inject(Router);
-  const token= authService.getToken();
+  const router = inject(Router);
 
-  if(token)
-  {
-    router.navigate(['/products']);
-    return false;
-  }
-  else{
-    return true;
-  }
+  if (authService.getToken()) router.navigate([ROUTES.PRODUCTS]);
+
+  return !authService.getToken();;
 };

@@ -8,12 +8,12 @@
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" title="name"/>
-      <mat-error *ngIf="productForm.get('name')?.hasError('required') && productForm.get('name')?.touched">
-        Name is required
-      </mat-error>
-      <mat-error *ngIf="productForm.get('name')?.hasError('noSpaces')">
-        Name cannot contain spaces
-      </mat-error>
+      @if (productForm.get('name')?.hasError('required') && productForm.get('name')?.touched) {
+        <mat-error>Name is required</mat-error>
+      }
+      @if (productForm.get('name')?.hasError('noSpaces')) {
+        <mat-error>Name cannot contain spaces</mat-error>
+      }
     </mat-form-field>
 
     <!-- Quantity -->
@@ -32,12 +32,12 @@
     <mat-form-field appearance="outline">
       <mat-label>Supplier</mat-label>
       <input matInput formControlName="supplier" title="Supplier" />
-      <mat-error *ngIf="productForm.get('supplier')?.hasError('required') && productForm.get('supplier')?.touched">
-        Supplier is required
-      </mat-error>
-      <mat-error *ngIf="productForm.get('supplier')?.hasError('noSpaces')">
-        Supplier cannot contain spaces
-      </mat-error>
+      @if (productForm.get('supplier')?.hasError('required') && productForm.get('supplier')?.touched) {
+        <mat-error>Supplier is required</mat-error>
+      }
+      @if (productForm.get('supplier')?.hasError('noSpaces')) {
+        <mat-error>Supplier cannot contain spaces</mat-error>
+      }
     </mat-form-field>
   </form>
 </div>

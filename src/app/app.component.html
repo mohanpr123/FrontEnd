@@ -1,21 +1,17 @@
 <mat-toolbar color="primary">
-  <span class="title">
-    <mat-icon>store</mat-icon> Inventory Management System
-  </span>
+  <span class="title">Inventory App</span>
+
   <span class="spacer"></span>
 
-  <nav *ngIf="!isLoggedIn && !isProductsRoute">
-    <button mat-button routerLink="/login">
-      <mat-icon>login</mat-icon> LOGIN
-    </button>
-    <button mat-button routerLink="/register">
-      <mat-icon>person_add</mat-icon> REGISTER
-    </button>
-  </nav>
+  <ng-container *ngIf="!isLoggedIn">
+    <button mat-button routerLink="/login" *ngIf="!isLoginRoute"><mat-icon>login</mat-icon>Login</button>
+    <button mat-button routerLink="/register" *ngIf="!isRegisterRoute"><mat-icon>person_add</mat-icon>Register</button>
+  </ng-container>
 
-  <button mat-button (click)="logout()" *ngIf="isLoggedIn && isProductsRoute">
-    <mat-icon>logout</mat-icon> LOGOUT
-  </button>
+  <ng-container *ngIf="isLoggedIn">
+    <span><mat-icon>person</mat-icon> {{ getUsername() }}</span>
+    <button mat-button (click)="logout()"><mat-icon>logout</mat-icon></button>
+  </ng-container>
 </mat-toolbar>
 
 <router-outlet></router-outlet>
