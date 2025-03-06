@@ -10,8 +10,9 @@ import { SnackbarService } from '../../../Services/PublicServices/snackbar.servi
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { tap, catchError, of } from 'rxjs';
-import { LoginForm, User } from '../../../types/app.type';
+import { LoginForm } from '../../../types/form.type';
 import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
+import { User } from '../../../types/user.type';
 
 
 @Component({
@@ -48,12 +49,12 @@ export class LoginComponent {
     if (this.loginForm.invalid)
       return;
 
-    const DATA = {
+    const data = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
-    }as User;
+    } as User;
     this.authService
-      .login(DATA)
+      .login(data)
       .pipe(
         tap(response => {
           this.authService.storeToken(response.jwt);

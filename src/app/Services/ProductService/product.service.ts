@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Product } from '../../types/app.type';
-import { ProductQuery } from '../../types/app.type';
+import { ProductQuery,Product } from '../../types/product.type';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { HttpWrapperService } from '../PublicServices/HttpWrapperService';
+import { HttpWrapperService } from '../PublicServices/http-wrapper.service';
 import { HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -21,14 +20,14 @@ export class ProductService {
       .set('sortBy', query.sortBy)
       .set('direction', query.sortDirection);
 
-    const endpoint = query.searchKeyword ? `${this.BackEndApi}/search` : `${this.BackEndApi}/all`;
-
     if (query.searchKeyword) {
       params = params.set('keyword', query.searchKeyword);
     }
 
-    return this.http.get<{ content: Product[]; totalElements: number; totalPages?: number }>(endpoint, params);
+    return this.http.get<{ content: Product[]; totalElements: number; totalPages?: number }>(
+      `${this.BackEndApi}/all`, params);
   }
+
 
   createProduct(product: Product): Observable<Product> {
     return this.http.post<Product>(`${this.BackEndApi}/create`, product);

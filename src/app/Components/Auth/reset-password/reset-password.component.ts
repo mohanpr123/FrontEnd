@@ -7,9 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { resetPassword } from '../../../types/app.type';
+import { resetPassword } from '../../../types/user.type';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
-import { MESSAGE,ROUTES } from '../../../Constants/app.constants';
+import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
 
 
 @Component({

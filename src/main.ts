@@ -6,14 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { authInterceptorInterceptor } from './app/Interceptor/auth-interceptor.interceptor';
+import { HttpWrapperService } from './app/Services/PublicServices/http-wrapper.service';
 
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(FormsModule),
-    provideHttpClient(
-      withInterceptors([authInterceptorInterceptor])
-    ),
+    provideHttpClient(),
     provideRouter(routes), provideAnimationsAsync(),
   ],
 }).catch(err => console.error(err));

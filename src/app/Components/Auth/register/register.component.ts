@@ -9,11 +9,11 @@ import { Router } from '@angular/router';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { CommonModule } from '@angular/common';
 import { tap, catchError, of } from 'rxjs';
-import { RegisterForm, User } from '../../../types/app.type';
+import { RegisterForm } from '../../../types/form.type';
 import { NoSpacesValidatorDirective } from '../../../Services/PublicServices/no-spaces.validator';
 import { ValidationErrors, AbstractControl } from '@angular/forms';
 import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
-
+import { User } from '../../../types/user.type';
 
 @Component({
   selector: 'app-register',
@@ -56,14 +56,14 @@ export class RegisterComponent {
   onRegister(): void {
     if (this.registerForm.invalid) return;
 
-    const DATA = {
+    const data = {
       username: this.registerForm.value.username,
       email: this.registerForm.value.email,
       password: this.registerForm.value.password,
-    }as User;
+    } as User;
 
     this.authService
-      .register(DATA)
+      .register(data)
       .pipe(
         tap(() => {
           this.snackBarService.showMessage(MESSAGE.REGISTEROK);

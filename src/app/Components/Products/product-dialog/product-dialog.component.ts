@@ -1,4 +1,4 @@
-import { Component, Inject, computed } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,11 +6,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { tap, catchError, of } from 'rxjs';
-import { Product } from '../../../types/app.type';
+import { Product } from '../../../types/product.type';
 import { ProductService } from '../../../Services/ProductService/product.service';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { NoSpacesValidatorDirective } from '../../../Services/PublicServices/no-spaces.validator';
-import { ProductForm } from '../../../types/app.type';
+import { ProductForm } from '../../../types/form.type';
 
 @Component({
   selector: 'app-product-dialog',
@@ -28,8 +28,7 @@ import { ProductForm } from '../../../types/app.type';
 })
 export class ProductDialogComponent {
   productForm: ProductForm;
-
-  isEdit = computed(() => !!this.data?.id);
+  isEdit: boolean;
 
   constructor(
     private snackbarService: SnackbarService,
@@ -38,6 +37,7 @@ export class ProductDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: Product,
     private form: FormBuilder
   ) {
+    this.isEdit = !!data?.id;
     this.productForm = this.form.nonNullable.group({
       id: [data?.id ?? 0],
       name: [data?.name ?? '', [Validators.required, NoSpacesValidatorDirective.noSpacesValidator()]],
@@ -55,26 +55,24 @@ export class ProductDialogComponent {
     if (this.productForm.invalid) return;
 
     const { id, name, quantity, price, supplier } = this.productForm.value;
-    const PRODUCT_DATA: Product = {
+    const productData: Product = {
       id: id!,
       name: name!.trim(),
       quantity: quantity!,
       price: price!,
-      supplier: supplier!.trim()
+      supplier: supplier!.trim(),
     };
 
-    (this.isEdit()
-      ? this.productService.updateProduct(id!, PRODUCT_DATA)
-      : this.productService.createProduct(PRODUCT_DATA)
-    )
+    const saveProduct = this.isEdit? this.productService.updateProduct(id!, productData): this.productService.createProduct(productData);
+
+    saveProduct
       .pipe(
-        tap(() => this.dialogRef.close({ action: this.isEdit() ? 'edit' : 'add', product: PRODUCT_DATA })),
+        tap(() => this.dialogRef.close({ action: this.isEdit ? 'edit' : 'add', product: productData })),
         catchError(() => {
-          this.snackbarService.showMessage(`Failed to ${this.isEdit() ? 'update' : 'create'} product`);
+          this.snackbarService.showMessage(`Failed to ${this.isEdit ? 'update' : 'create'} product`);
           return of();
         })
       )
       .subscribe();
   }
-
 }

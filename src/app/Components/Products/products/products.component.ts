@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Subject, debounceTime, catchError, of, tap } from 'rxjs';
-import { Product } from '../../../types/app.type';
+import { Product,ProductQuery } from '../../../types/product.type';
 import { ProductService } from '../../../Services/ProductService/product.service';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
@@ -14,8 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MESSAGE } from '../../../Constants/app.constants';
 import { MatTableModule } from '@angular/material/table';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { ProductQuery } from '../../../types/app.type';
+import { MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-products',
@@ -33,7 +32,7 @@ import { ProductQuery } from '../../../types/app.type';
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
 })
-export class ProductsComponent {
+export class ProductsComponent implements OnInit {
   products: Product[] = [];
   DISPLAYED_COLUMNS = ['name', 'quantity', 'price', 'supplier', 'actions'];
   totalItems = 0;
@@ -49,7 +48,9 @@ export class ProductsComponent {
     private productService: ProductService,
     private dialog: MatDialog,
     private snackbarService: SnackbarService
-  ) {
+  ) { }
+
+  ngOnInit(): void {
     this.searchSubject.pipe(debounceTime(300)).subscribe((word) => {
       this.searchKeyword = word.trim();
       this.loadProducts();
@@ -58,7 +59,7 @@ export class ProductsComponent {
   }
 
   loadProducts(): void {
-    const QUERY: ProductQuery = {
+    const productQuery: ProductQuery = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       sortBy: this.sortBy,
@@ -67,7 +68,7 @@ export class ProductsComponent {
     };
 
     this.productService
-      .loadProducts(QUERY)
+      .loadProducts(productQuery)
       .pipe(
         tap(response => {
           this.products = response.content;
@@ -132,10 +133,6 @@ export class ProductsComponent {
           this.snackbarService.showMessage(result.action === 'add' ? MESSAGE.CREATEOK : MESSAGE.UPDATEOK);
           this.loadProducts();
         }),
-        catchError(()=>{
-          this.snackbarService.showMessage(MESSAGE.BADRESPONSE);
-          return of();
-        })
       )
       .subscribe();
   }

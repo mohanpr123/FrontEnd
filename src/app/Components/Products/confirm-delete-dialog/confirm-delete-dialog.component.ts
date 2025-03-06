@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class ConfirmDeleteDialogComponent {
   constructor(private dialogRef: MatDialogRef<ConfirmDeleteDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: { productId: number }) {}
 
-  closeDialog(isConfirmed: boolean): void {
-    this.dialogRef.close(isConfirmed);
-  }
+  // closeDialog(isConfirmed: boolean): void {
+  //   this.dialogRef.close(isConfirmed);
+  // }
 }
