@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Subject, debounceTime, catchError, of, tap } from 'rxjs';
-import { Product,ProductQuery } from '../../../types/product.type';
+import { Product, ProductQuery } from '../../../types/product.type';
 import { ProductService } from '../../../Services/ProductService/product.service';
 import { SnackbarService } from '../../../Services/PublicServices/snackbar.service';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
@@ -13,8 +13,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MESSAGE } from '../../../Constants/app.constants';
-import { MatTableModule } from '@angular/material/table';
+import { MatRow, MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { AuthService } from '../../../Services/Auth/auth.service';
+import { UploadService } from '../../../Services/PublicServices/upload.service';
+import { HeaderComponent } from "../../Auth/header/header.component";
 
 @Component({
   selector: 'app-products',
@@ -27,8 +30,9 @@ import { MatSortModule } from '@angular/material/sort';
     MatInputModule,
     CommonModule,
     MatPaginatorModule,
-    MatSortModule
-  ],
+    MatSortModule,
+    HeaderComponent
+],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
 })
@@ -47,8 +51,9 @@ export class ProductsComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackbarService: SnackbarService
-  ) { }
+    private snackbarService: SnackbarService,
+    private authService:AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.searchSubject.pipe(debounceTime(300)).subscribe((word) => {
@@ -77,7 +82,6 @@ export class ProductsComponent implements OnInit {
       )
       .subscribe();
   }
-
 
   onPageChange({ pageIndex, pageSize }: PageEvent): void {
     this.pageIndex = pageIndex;
@@ -135,5 +139,10 @@ export class ProductsComponent implements OnInit {
         }),
       )
       .subscribe();
+  }
+
+  logout()
+  {
+    return this.authService.logout();
   }
 }

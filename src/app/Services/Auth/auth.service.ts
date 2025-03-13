@@ -22,15 +22,11 @@ export class AuthService {
   ) { }
 
   login(user: User): Observable<JwtResponse> {
-    return this.http.post<JwtResponse>(`${this.BackEndUrl}/${ROUTES.LOGIN}`, user).pipe(
-      tap(({ jwt }) => {
-        if (jwt) this.storeToken(jwt);
-      })
-    );
+    return this.http.post<JwtResponse>(`${this.BackEndUrl}/${ROUTES.LOGIN}`, user)
   }
 
   register(user: User): Observable<User> {
-    return this.http.post<User>(`${this.BackEndUrl}/signup`, user);
+    return this.http.post<User>(`${this.BackEndUrl}/register`, user);
   }
 
   resetPassword(request: resetPassword): Observable<ResetResponse> {
@@ -43,10 +39,11 @@ export class AuthService {
 
   storeUsername(username: string): void {
     this.username = username;
+    this.cookieService.set('username',username,1,'/')
   }
 
   getUsername(): string {
-    return this.username;
+    return this.cookieService.get('username');
   }
 
   getToken(): string {

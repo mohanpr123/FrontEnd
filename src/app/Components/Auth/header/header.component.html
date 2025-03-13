@@ -1,0 +1,44 @@
+@if (!isLoggedIn) {
+  <mat-toolbar>
+    <span class="title">Inventory App</span>
+
+    <span class="spacer"></span>
+
+    @if (!isLoginRoute) {
+      <button mat-button class="btn" routerLink="/login">
+        <mat-icon>login</mat-icon>Login
+      </button>
+    }
+
+    @if (!isRegisterRoute) {
+      <button mat-button class="btn" routerLink="/register">
+        <mat-icon>person_add</mat-icon>Register
+      </button>
+    }
+  </mat-toolbar>
+}
+@if(isProductsRoute){
+<div class="main-header">
+  <header>
+    <span class="title">Inventory</span>
+    <div class="user-actions">
+      <div class="user-profile">
+        <label for="fileInput" class="profile-label">
+          @if(imageUrl){
+          <img  [src]="imageUrl" class="profile-image" alt="profile_image"/>
+          }
+          @else {
+          ➕}
+        </label>
+        <input id="fileInput" type="file" (change)="onFileSelected($event)" accept="image/*" hidden />
+        <span class="username" (click)="toggleLogout()">{{ username }}</span>
+        @if (showLogout) {
+          <button mat-icon-button class="btn" (click)="logout()" aria-label="Logout">
+          <mat-icon>exit_to_app</mat-icon>
+          </button>
+        }
+    </div>
+    </div>
+  </header>
+</div>
+}

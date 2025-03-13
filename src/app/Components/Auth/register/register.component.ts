@@ -14,6 +14,7 @@ import { NoSpacesValidatorDirective } from '../../../Services/PublicServices/no-
 import { ValidationErrors, AbstractControl } from '@angular/forms';
 import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
 import { User } from '../../../types/user.type';
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
   selector: 'app-register',
@@ -25,7 +26,8 @@ import { User } from '../../../types/user.type';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
-  ],
+    HeaderComponent
+],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })

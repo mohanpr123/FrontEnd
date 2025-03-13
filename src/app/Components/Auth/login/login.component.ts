@@ -13,6 +13,7 @@ import { tap, catchError, of } from 'rxjs';
 import { LoginForm } from '../../../types/form.type';
 import { MESSAGE, ROUTES } from '../../../Constants/app.constants';
 import { User } from '../../../types/user.type';
+import { HeaderComponent } from "../header/header.component";
 
 
 @Component({
@@ -26,7 +27,8 @@ import { User } from '../../../types/user.type';
     MatButtonModule,
     MatSnackBarModule,
     RouterLink,
-  ],
+    HeaderComponent
+],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError ,map} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { ROUTES } from '../../Constants/app.constants';
@@ -12,9 +12,7 @@ export class HttpWrapperService {
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   private setHeaders(): HttpHeaders {
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
+    let headers = new HttpHeaders();
 
     const token = this.cookieService.get('jwt');
     if (token) {
@@ -32,11 +30,18 @@ export class HttpWrapperService {
     );
   }
 
-  get<T>(url: string, params?: HttpParams): Observable<T> {
+  get<T>(url: string, params?: HttpParams,): Observable<T> {
     const headers = this.skipAuth(url) ? new HttpHeaders() : this.setHeaders();
     return this.http
       .get<T>(url, { headers, params })
       .pipe(catchError(this.handleError));
+  }
+
+  getJpegImage(url: string, params?: HttpParams): Observable<Blob> {
+    const headers = this.skipAuth(url)? new HttpHeaders({ 'Accept': 'image/jpeg' }): this.setHeaders();
+
+    return this.http.get(url, { headers,params,responseType: 'blob'})
+        .pipe(catchError(this.handleError));
   }
 
   post<T>(url: string, body: any): Observable<T> {

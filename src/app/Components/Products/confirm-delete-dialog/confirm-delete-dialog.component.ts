@@ -11,9 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./confirm-delete-dialog.component.css']
 })
 export class ConfirmDeleteDialogComponent {
-  constructor(private dialogRef: MatDialogRef<ConfirmDeleteDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: { productId: number }) {}
+  constructor(private dialogRef: MatDialogRef<ConfirmDeleteDialogComponent>,
+ @Inject(MAT_DIALOG_DATA) public data: { productId: number }) {}
 
-  // closeDialog(isConfirmed: boolean): void {
-  //   this.dialogRef.close(isConfirmed);
-  // }
 }
