@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { User, JwtResponse, resetPassword, ResetResponse } from '../../types/user.type';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { HttpWrapperService } from '../PublicServices/http-wrapper.service';
 import { environment } from '../../../environments/environment';
-import { ROUTES } from '../../Constants/app.constants';
+import { ROUTES } from '../../constants/app.constants';
 
 @Injectable({
   providedIn: 'root',

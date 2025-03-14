@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError ,map} from 'rxjs';
+import { Observable, throwError, map } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
-import { ROUTES } from '../../Constants/app.constants';
+import { ROUTES } from '../../constants/app.constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HttpWrapperService {
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) { }
 
   private setHeaders(): HttpHeaders {
     let headers = new HttpHeaders();
@@ -18,7 +18,6 @@ export class HttpWrapperService {
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-
     return headers;
   }
 
@@ -32,43 +31,31 @@ export class HttpWrapperService {
 
   get<T>(url: string, params?: HttpParams,): Observable<T> {
     const headers = this.skipAuth(url) ? new HttpHeaders() : this.setHeaders();
-    return this.http
-      .get<T>(url, { headers, params })
+    return this.http.get<T>(url, { headers, params })
       .pipe(catchError(this.handleError));
-  }
-
-  getJpegImage(url: string, params?: HttpParams): Observable<Blob> {
-    const headers = this.skipAuth(url)? new HttpHeaders({ 'Accept': 'image/jpeg' }): this.setHeaders();
-
-    return this.http.get(url, { headers,params,responseType: 'blob'})
-        .pipe(catchError(this.handleError));
   }
 
   post<T>(url: string, body: any): Observable<T> {
     const headers = this.skipAuth(url) ? new HttpHeaders() : this.setHeaders();
-    return this.http
-      .post<T>(url, body, { headers })
+    return this.http.post<T>(url, body, { headers })
       .pipe(catchError(this.handleError));
   }
 
   put<T>(url: string, body: any): Observable<T> {
     const headers = this.skipAuth(url) ? new HttpHeaders() : this.setHeaders();
-    return this.http
-      .put<T>(url, body, { headers })
+    return this.http.put<T>(url, body, { headers })
       .pipe(catchError(this.handleError));
   }
 
   delete<T>(url: string): Observable<T> {
     const headers = this.skipAuth(url) ? new HttpHeaders() : this.setHeaders();
-    return this.http
-      .delete<T>(url, { headers })
+    return this.http.delete<T>(url, { headers })
       .pipe(catchError(this.handleError));
   }
 
-
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    console.error('HTTP Error:', error);
-    return throwError(() => new Error('Something went wrong'));
-  }
+  private handleError(error: HttpErrorResponse) {
+    console.error("HTTP Error:", error);
+    console.error("Error Body:", error.error);
+    return throwError(() => new Error(error.message || 'Something went wrong'));
+}
 }
