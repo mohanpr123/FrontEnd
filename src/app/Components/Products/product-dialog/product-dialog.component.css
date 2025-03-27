@@ -1,0 +1,39 @@
+.dialog-content {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-container {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 5px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  .dialog-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+.title {
+  padding: 15px;
+}

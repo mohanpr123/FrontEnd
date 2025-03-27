@@ -1,0 +1,49 @@
+<h1 mat-dialog-title class="title">{{ isEdit ? 'Edit Product' : 'Add Product' }}</h1>
+
+<div mat-dialog-content class="dialog-content">
+  <form [formGroup]="productForm" class="form-container">
+    <input formControlName="id" type="hidden" />
+
+    <!-- Product Name -->
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" title="name"/>
+      @if (productForm.get('name')?.hasError('required') && productForm.get('name')?.touched) {
+        <mat-error>Name is required</mat-error>
+      }
+      @if (productForm.get('name')?.hasError('noSpaces')) {
+        <mat-error>Name cannot contain spaces</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Quantity -->
+    <mat-form-field appearance="outline">
+      <mat-label>Quantity</mat-label>
+      <input matInput type="number" formControlName="quantity" title="Quantity" />
+    </mat-form-field>
+
+    <!-- Price -->
+    <mat-form-field appearance="outline">
+      <mat-label>Price in Rupees</mat-label>
+      <input matInput type="number" formControlName="price" title="Price" />
+    </mat-form-field>
+
+    <!-- Supplier -->
+    <mat-form-field appearance="outline">
+      <mat-label>Supplier</mat-label>
+      <input matInput formControlName="supplier" title="Supplier" />
+      @if (productForm.get('supplier')?.hasError('required') && productForm.get('supplier')?.touched) {
+        <mat-error>Supplier is required</mat-error>
+      }
+      @if (productForm.get('supplier')?.hasError('noSpaces')) {
+        <mat-error>Supplier cannot contain spaces</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</div>
+
+<!-- Action Buttons -->
+<div mat-dialog-actions class="dialog-actions">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!productForm.valid" (click)="onSave()">Save</button>
+</div>
